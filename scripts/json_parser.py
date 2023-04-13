@@ -2,7 +2,7 @@ import json
 from typing import Any, Dict, Union
 from call_ai_function import call_ai_function
 from config import Config
-from json_utils import correct_json
+from json_utils import correct_json, extract_json_from_string
 from logger import logger
 
 cfg = Config()
@@ -34,6 +34,7 @@ def fix_and_parse_json(
     """Fix and parse JSON string"""
     try:
         json_str = json_str.replace('\t', '')
+        json_str = extract_json_from_string(json_str)
         return json.loads(json_str)
     except json.JSONDecodeError as _:  # noqa: F841
         try:
@@ -76,6 +77,12 @@ def fix_and_parse_json(
 
 
 def fix_json(json_str: str, schema: str) -> str:
+    if json_str is None:
+        return "failed"
+
+    if json_str is NoneType:
+        return "failed"
+
     """Fix the given JSON string to make it parseable and fully compliant with the provided schema."""
     # Try to fix the JSON using GPT:
     function_string = "def fix_json(json_str: str, schema:str=None) -> str:"

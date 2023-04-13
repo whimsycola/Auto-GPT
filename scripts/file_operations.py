@@ -64,14 +64,29 @@ def delete_file(filename):
         return "File deleted successfully."
     except Exception as e:
         return "Error: " + str(e)
+    finally:
+        pass
 
-def search_files(directory):
+
+def search_files(directory=""):
+    """Search for files in a directory"""
     found_files = []
 
     if directory == "" or directory == "/":
         search_directory = working_directory
     else:
-        search_directory = safe_join(working_directory, directory)
+        print(f"Enter 'y' to authorise command, or 'n' to exit program.", flush=True)
+        while True:
+            console_input = utils.clean_input(Fore.MAGENTA + "Input:" + Style.RESET_ALL)
+            if console_input.lower() == "y":
+                search_directory = directory
+                break
+            elif console_input.lower() == "n":
+                search_directory = safe_join(working_directory, directory)
+                break
+            else:
+                search_directory = safe_join(working_directory, directory)
+                break
 
     for root, _, files in os.walk(search_directory):
         for file in files:

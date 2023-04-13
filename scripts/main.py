@@ -410,7 +410,18 @@ while True:
                     f"\nResult: {result} " \
                     f"\nHuman Feedback: {user_input} "
 
-    memory.add(memory_to_add)
+    for x in range(0, 20):
+        try:
+            memory.add(memory_to_add)
+            break
+        except openai.error.RateLimitError as e:
+            logger.typewriter_log("SYSTEM: ", Fore.YELLOW, "Currently being rate limited. Trying again in 30 seconds")
+            time.sleep(30)
+            pass
+        except:
+            logger.typewriter_log("SYSTEM: ", Fore.YELLOW, "Unable to store memory")
+            break
+        
 
     # Check if there's a result from the command append it to the message
     # history

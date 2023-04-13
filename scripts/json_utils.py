@@ -1,6 +1,8 @@
 import re
 import json
 from config import Config
+from typing import Any, Dict
+import regex
 
 cfg = Config()
 
@@ -125,3 +127,19 @@ def correct_json(json_str: str) -> str:
         if balanced_str := balance_braces(json_str):
             return balanced_str
     return json_str
+    
+def extract_json_from_string(input_string: str) -> Dict[str, Any]:
+    json_pattern = regex.compile(r"\{(?:[^{}]|(?R))*\}")
+    search_result = json_pattern.search(input_string)
+
+    if search_result is None:
+        json_data = {
+            "thoughts": {"reasoning": input_string},
+            "command": {"name": "do_nothing", "args": {}},
+        }
+        json_string = json.dumps(json_data)
+    else:
+        json_string = search_result.group(0)
+        json_string = json_string.replace("\n", " ").replace("  ", " ")
+
+    return json_string
